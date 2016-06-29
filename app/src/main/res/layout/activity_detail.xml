@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+      android:id="@+id/placeImage"
+      android:layout_width="150dp"
+      android:layout_height="150dp"
+      android:layout_gravity="center"
+      android:scaleType="centerCrop"
+      android:transitionName="tImage" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/llEditTextHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#95000000">
+
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar_detail"/>
+    </LinearLayout>
+
+  </FrameLayout>
+
+  <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="vertical"
+      android:id="@+id/placeNameHolder"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/primary_dark"
+      android:transitionName="tNameHolder">
+
+
+      <TextView
+          android:id="@+id/id_text"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:paddingLeft="10dp"
+          android:textAppearance="?android:attr/textAppearanceLarge"
+          android:textColor="@android:color/white" />
+
+      <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white" />
+
+      <TextView
+          android:id="@+id/role_id"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:paddingLeft="10dp"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textColor="@android:color/white" />
+
+      <TextView
+          android:id="@+id/teamLeader_id"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:paddingLeft="10dp"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+
+
+  </FrameLayout>
+
+
+
+</LinearLayout>

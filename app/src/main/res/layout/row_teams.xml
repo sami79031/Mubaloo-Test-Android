@@ -9,6 +9,8 @@
     card_view:cardCornerRadius="@dimen/card_corner_radius"
     card_view:cardElevation="@dimen/card_elevation">
 
+
+
     <LinearLayout
         android:id="@+id/mainHolder"
         android:orientation="vertical"
@@ -48,6 +50,15 @@
                 android:paddingLeft="10dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/black" />
+
+            <TextView
+                android:layout_margin="5dp"
+                android:id="@+id/leader_id"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_gravity="right"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
 
         </FrameLayout>

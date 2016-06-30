@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.thracecodeinc.mubalootest.Models.Team;
+import com.thracecodeinc.mubalootest.SQLite.DBHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -97,6 +99,8 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
                 // ListView for the teams
                 ArrayList<Team> team = new ArrayList<>();
 
+                //sqlite instance
+                DBHandler db = new DBHandler(context);
 
                 // Getting JSON Array node
                 JSONArray jsonArray = new JSONArray(json);
@@ -108,9 +112,16 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
 
                     //getting the CEO
                     if (i == 0) {
-                        team.add(new Team(jObj.getString(TAG_ID),jObj.getString(TAG_FIRST_NAME)
+                        Team ceo = new Team(jObj.getString(TAG_ID),jObj.getString(TAG_FIRST_NAME)
                                 ,jObj.getString(TAG_LAST_NAME),jObj.getString(TAG_ROLE),
-                                jObj.getString(TAG_PROFILE_IMG),false,""));
+                                jObj.getString(TAG_PROFILE_IMG),false,"");
+                        team.add(ceo);
+
+                        if (db.getMembersCount() > 0)
+                            db.updateMember(ceo);
+                        else
+                            db.addTeam(ceo);
+
                     } else{
 
                         //getting the members of a team
@@ -134,9 +145,26 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
 
                             team.add(member);
 
+                            if (db.getMembersCount() > 0)
+                                db.updateMember(member);
+                            else
+                                db.addTeam(member);
+
                         }
                     }
 
+                }
+
+                Log.d("Reading: ", "Reading all shops..");
+                List<Team> members = db.getAllMembers();
+
+                for (Team m : members) {
+                    String log = "Id: " + m.getID() + " ,FName: " + m.getFirstName()
+                            + " ,LN: " + m.getLastName()+ " ,role: "+ m.getRole()
+                            + " ,url: "+m.getProfileImgURL() + " ,temL: "+m.isTeamLead()
+                            +" ,team name: "+ m.getTeamName();
+                    // Writing shops  to log
+                    Log.d("Members: : ", log);
                 }
 
                 return team;

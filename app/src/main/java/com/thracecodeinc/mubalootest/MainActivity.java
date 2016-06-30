@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements GetTeams.AsyncRes
         setContentView(R.layout.main_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //call the restful api
         GetTeams getTeams = new GetTeams(this);
         getTeams.execute();
         getTeams.delegate =  this;

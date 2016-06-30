@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 
 import com.google.gson.Gson;
@@ -102,6 +103,15 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
                 //sqlite instance
                 DBHandler db = new DBHandler(context);
 
+                /**
+                 * @param checkTableRowCount used to
+                 * determine whether to use SQL function update
+                 *  or insert. If true use UPDATE
+                 */
+                boolean checkTableRowCount = false;
+                if (db.getMembersCount() > 0)
+                    checkTableRowCount = true;
+
                 // Getting JSON Array node
                 JSONArray jsonArray = new JSONArray(json);
 
@@ -118,7 +128,7 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
                         team.add(ceo);
 
                         //if db count > 0 update rows else insert
-                        if (db.getMembersCount() > 0)
+                        if (checkTableRowCount)
                             db.updateMember(ceo);
                         else
                             db.addTeam(ceo);
@@ -146,8 +156,8 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
 
                             team.add(member);
 
-                            //if db count > 0 update rows else insert
-                            if (db.getMembersCount() > 0)
+
+                            if (checkTableRowCount)
                                 db.updateMember(member);
                             else
                                 db.addTeam(member);

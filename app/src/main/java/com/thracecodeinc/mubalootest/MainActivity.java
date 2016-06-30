@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.thracecodeinc.mubalootest.Models.Team;
 import com.thracecodeinc.mubalootest.RESTful.GetTeams;
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements GetTeams.AsyncRes
     private RecyclerView mRecyclerView;
     private StaggeredGridLayoutManager mStaggeredLayoutManager;
     private TeamsAdapter mAdapter;
+    private SwipeRefreshLayout swipeContainer;
+    private DBHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,19 +42,54 @@ public class MainActivity extends AppCompatActivity implements GetTeams.AsyncRes
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        db = new DBHandler(this);
         /*check if network connection
         *load from DB if no network
         */
         if (isNetworkConnected()) {
             //call the restful api
-            GetTeams getTeams = new GetTeams(this);
-            getTeams.execute();
-            getTeams.delegate = this;
+            callRestfull();
         } else {
-            initRecycleView(new DBHandler(this).getAllMembers());
+            initRecycleView(db.getAllMembers());
             Log.d("DB sqlite", "loaded from DB");
         }
 
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Configure the refreshing colors
+        assert swipeContainer != null;
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        //pull to refresh implementation
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //if network available and DB has no rows call Api
+                ArrayList<Team> m = db.getAllMembers();
+                if (isNetworkConnected() && m.size() == 0)
+                    callRestfull();
+                else {
+                    initRecycleView(m);
+                    swipeContainer.setRefreshing(false);
+                    if (m.size() > 0)
+                        Toast.makeText(MainActivity.this, "Members refreshed", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(MainActivity.this, "No data to show", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
+    }
+
+
+    public void callRestfull(){
+        GetTeams getTeams = new GetTeams(this);
+        getTeams.execute();
+        getTeams.delegate = this;
     }
 
 
@@ -110,8 +149,10 @@ public class MainActivity extends AppCompatActivity implements GetTeams.AsyncRes
             mAdapter.SetOnItemClickListener(onItemClickListener);
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setLayoutManager(mStaggeredLayoutManager);
+
         }
     }
+
 
 
     public boolean isNetworkConnected(){

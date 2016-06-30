@@ -109,8 +109,8 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     // Getting All Members
-    public List<Team> getAllMembers() {
-        List<Team> memberList = new ArrayList<Team>();
+    public ArrayList<Team> getAllMembers() {
+        ArrayList<Team> memberList = new ArrayList<Team>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_TEAMS;
 

@@ -20,10 +20,13 @@ import android.widget.ImageView;
 
 import com.thracecodeinc.mubalootest.Models.Team;
 import com.thracecodeinc.mubalootest.RESTful.GetTeams;
+import com.thracecodeinc.mubalootest.SQLite.DBHandler;
+import com.thracecodeinc.mubalootest.utils.NetworkChangeReceiver;
+import com.thracecodeinc.mubalootest.utils.NetworkUtil;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements GetTeams.AsyncResponse {
+public class MainActivity extends AppCompatActivity implements GetTeams.AsyncResponse, NetworkChangeReceiver.OnNetworkChangeListener {
     private RecyclerView mRecyclerView;
     private StaggeredGridLayoutManager mStaggeredLayoutManager;
     private TeamsAdapter mAdapter;
@@ -35,14 +38,23 @@ public class MainActivity extends AppCompatActivity implements GetTeams.AsyncRes
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //call the restful api
-        GetTeams getTeams = new GetTeams(this);
-        getTeams.execute();
-        getTeams.delegate =  this;
+        /*check if network connection
+        *load from DB if no network
+        */
+        if (isNetworkConnected()) {
+            //call the restful api
+            GetTeams getTeams = new GetTeams(this);
+            getTeams.execute();
+            getTeams.delegate = this;
+        } else {
+            initRecycleView(new DBHandler(this).getAllMembers());
+            Log.d("DB sqlite", "loaded from DB");
+        }
 
     }
 
 
+    //on selected cell go to DetailActivity class
     TeamsAdapter.OnItemClickListener onItemClickListener = new TeamsAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, Team member) {
@@ -87,6 +99,10 @@ public class MainActivity extends AppCompatActivity implements GetTeams.AsyncRes
 
     @Override
     public void processFinish(ArrayList<Team> output) {
+        initRecycleView(output);
+    }
+
+    public void initRecycleView(ArrayList<Team> output){
         if (output != null) {
             mRecyclerView = (RecyclerView) findViewById(R.id.list);
             mStaggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
@@ -95,5 +111,20 @@ public class MainActivity extends AppCompatActivity implements GetTeams.AsyncRes
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setLayoutManager(mStaggeredLayoutManager);
         }
+    }
+
+
+    public boolean isNetworkConnected(){
+        int status = NetworkUtil.getConnectivityStatus(this);
+        if (status ==  NetworkUtil.TYPE_NOT_CONNECTED)
+            return false;
+
+        return true;
+    }
+
+    //getting message s about the internet connection status
+    @Override
+    public void onSNetworkChange(String message) {
+        //do something in case of network change
     }
 }

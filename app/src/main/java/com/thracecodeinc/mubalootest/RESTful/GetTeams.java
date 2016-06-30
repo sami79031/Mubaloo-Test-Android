@@ -117,6 +117,7 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
                                 jObj.getString(TAG_PROFILE_IMG),false,"");
                         team.add(ceo);
 
+                        //if db count > 0 update rows else insert
                         if (db.getMembersCount() > 0)
                             db.updateMember(ceo);
                         else
@@ -145,6 +146,7 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
 
                             team.add(member);
 
+                            //if db count > 0 update rows else insert
                             if (db.getMembersCount() > 0)
                                 db.updateMember(member);
                             else
@@ -153,18 +155,6 @@ public class GetTeams extends AsyncTask<Void, Void, Void> {
                         }
                     }
 
-                }
-
-                Log.d("Reading: ", "Reading all shops..");
-                List<Team> members = db.getAllMembers();
-
-                for (Team m : members) {
-                    String log = "Id: " + m.getID() + " ,FName: " + m.getFirstName()
-                            + " ,LN: " + m.getLastName()+ " ,role: "+ m.getRole()
-                            + " ,url: "+m.getProfileImgURL() + " ,temL: "+m.isTeamLead()
-                            +" ,team name: "+ m.getTeamName();
-                    // Writing shops  to log
-                    Log.d("Members: : ", log);
                 }
 
                 return team;
